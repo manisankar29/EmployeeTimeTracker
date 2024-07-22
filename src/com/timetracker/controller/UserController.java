@@ -8,35 +8,32 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebServlet("/user")
 public class UserController extends HttpServlet {
     private UserService userService = new UserService();
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if (action.equals("login")) {
+        if ("login".equals(action)) {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
+
             User user = userService.authenticateUser(username, password);
+
             if (user != null) {
-                request.getSession().setAttribute("user", user);
-                response.sendRedirect("viewTasks.jsp");
+                HttpSession session = request.getSession();
+                session.setAttribute("user", user);
+                response.sendRedirect("dashboard.jsp");
             } else {
                 response.sendRedirect("login.jsp?error=Invalid username or password");
             }
-        } else if (action.equals("register")) {
-            String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            String role = request.getParameter("role");
-            User user = new User();
-            user.setUsername(username);
-            user.setPassword(password);
-            user.setRole(role);
-            userService.registerUser(user);
-            response.sendRedirect("login.jsp?message=Registration successful");
+        } else if ("register".equals(action)) {
+            // Registration logic here
         }
     }
 }
