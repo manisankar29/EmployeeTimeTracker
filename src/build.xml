@@ -1,0 +1,47 @@
+<project name="EmployeeTimeTracker" default="deploy" basedir=".">
+    
+    <!-- Define properties -->
+    <property name="src.dir" location="src"/>
+    <property name="build.dir" location="build"/>
+    <property name="classes.dir" location="${build.dir}/classes"/>
+    <property name="war.dir" location="${build.dir}/war"/>
+    <property name="web.dir" location="WebContent"/>
+    <property name="lib.dir" location="lib"/>
+    <property name="war.file" location="${war.dir}/EmployeeTimeTracker.war"/>
+    <property name="tomcat.dir" location="/path/to/tomcat"/>
+    <property name="tomcat.webapps.dir" location="${tomcat.dir}/webapps"/>
+
+    <!-- Clean target -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <!-- Compile target -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false">
+            <classpath>
+                <fileset dir="${lib.dir}">
+                    <include name="**/*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- WAR target -->
+    <target name="war" depends="compile">
+        <mkdir dir="${war.dir}"/>
+        <war destfile="${war.file}" webxml="${web.dir}/WEB-INF/web.xml">
+            <fileset dir="${classes.dir}"/>
+            <fileset dir="${web.dir}">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+            <lib dir="${lib.dir}"/>
+        </war>
+    </target>
+
+    <!-- Deploy target -->
+    <target name="deploy" depends="war">
+        <copy file="${war.file}" todir="${tomcat.webapps.dir}"/>
+    </target>
+</project>

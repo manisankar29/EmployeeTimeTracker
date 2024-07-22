@@ -1,52 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee 
-                             https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd" 
-         version="5.0">
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
 
-    <display-name>Employee Time Tracker</display-name>
+    <display-name>EmployeeTimeTracker</display-name>
+    
+    <!-- Context Parameters -->
+    <context-param>
+        <param-name>jdbc/TimeTrackerDB</param-name>
+        <param-value>jdbc:mysql://localhost:3306/timetracker</param-value>
+    </context-param>
 
+    <!-- Welcome File List -->
     <welcome-file-list>
         <welcome-file>login.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- User Controller Servlet -->
     <servlet>
-        <servlet-name>UserServlet</servlet-name>
+        <servlet-name>UserController</servlet-name>
         <servlet-class>com.timetracker.controller.UserController</servlet-class>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>UserServlet</servlet-name>
+        <servlet-name>UserController</servlet-name>
         <url-pattern>/user</url-pattern>
     </servlet-mapping>
 
+    <!-- Task Controller Servlet -->
     <servlet>
-        <servlet-name>TaskServlet</servlet-name>
+        <servlet-name>TaskController</servlet-name>
         <servlet-class>com.timetracker.controller.TaskController</servlet-class>
     </servlet>
+
     <servlet-mapping>
-        <servlet-name>TaskServlet</servlet-name>
+        <servlet-name>TaskController</servlet-name>
         <url-pattern>/task</url-pattern>
     </servlet-mapping>
 
-    <error-page>
-        <error-code>404</error-code>
-        <location>/error/404.jsp</location>
-    </error-page>
+    <!-- Session Configuration -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 
-    <error-page>
-        <exception-type>java.lang.Throwable</exception-type>
-        <location>/error/error.jsp</location>
-    </error-page>
-
+    <!-- Security Constraints -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Protected Area</web-resource-name>
-            <url-pattern>/protected/*</url-pattern>
+            <url-pattern>/task/*</url-pattern>
+            <url-pattern>/user/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>ADMIN</role-name>
-            <role-name>ASSOCIATE</role-name>
+            <role-name>associate</role-name>
+            <role-name>admin</role-name>
         </auth-constraint>
     </security-constraint>
 
@@ -54,15 +61,16 @@
         <auth-method>FORM</auth-method>
         <form-login-config>
             <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/error.jsp</form-error-page>
+            <form-error-page>/login.jsp?error=true</form-error-page>
         </form-login-config>
     </login-config>
 
     <security-role>
-        <role-name>ADMIN</role-name>
+        <role-name>associate</role-name>
     </security-role>
+
     <security-role>
-        <role-name>ASSOCIATE</role-name>
+        <role-name>admin</role-name>
     </security-role>
 
 </web-app>
